@@ -14,7 +14,7 @@ if __name__ == '__main__':
     spark = SparkSession \
         .builder \
         .appName("DSL examples") \
-        .master('local[*]') \
+        .master('yarn') \
         .getOrCreate()
     spark.sparkContext.setLogLevel('ERROR')
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     financeDf\
         .withColumn("Date", to_date(from_unixtime(unix_timestamp("Date", "MM/dd/yyyy"))))\
         .withColumn("RollingAvg", avg("Amount").over(accNumPrev4WindowSpec))\
-        .show(20, False)
+        .show(40, False)
 
     productList = [
         Product("Thin", "Cell phone", 6000),
@@ -75,4 +75,4 @@ if __name__ == '__main__':
                 dense_rank().over(catRevenueWindowSpec).alias("rev_dense_rank")) \
         .show()
 
-# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" dataframe/curation/dsl/window_func_demo.py
+# spark-submit --packages "org.apache.hadoop:hadoop-aws:2.7.4" --master yarn dataframe/curation/dsl/window_func_demo.py
